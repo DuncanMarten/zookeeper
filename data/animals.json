@@ -117,6 +117,15 @@
         "hungry"
       ],
       "id": "11"
+    },
+    {
+      "name": "Duncan",
+      "species": "Person",
+      "diet": "omnivore",
+      "personalityTraits": [
+        "goofy"
+      ],
+      "id": "12"
     }
   ]
 }

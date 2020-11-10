@@ -12,6 +12,8 @@ app.use(express.urlencoded({ extended: true}));
 // parse incoming JSON data
 app.use(express.json());
 
+app.use(express.static('public'));
+
 function filterByQuery(query, animalsArray) {
     let personalityTraitsArray = [];
     
@@ -57,7 +59,7 @@ function findById(id, animalsArray) {
 
 function createNewAnimal(body, animalsArray) {
     const animal = body;
-    animalsArray.push(animal);
+    animals.push(animal);
     fs.writeFileSync(
         path.join(__dirname, './data/animals.json'),
         JSON.stringify({ animals: animalsArray }, null, 2)
@@ -75,7 +77,7 @@ function validateAnimal(animal) {
     if (!animal.diet || typeof animal.diet !== 'string') {
         return false;
     }
-    if (!animal.personalityTraits || typeof animal.personalityTraits !== 'string') {
+    if (!animal.personalityTraits || !Array.isArray(animal.personalityTraits)) {
         return false;
     }
     return true;
@@ -105,11 +107,27 @@ app.post('/api/animals', (req, res) => {
     if (!validateAnimal(req.body)) {
         res.status(400).send('The animal is not properly formatted.');
     } else {
-    // add animal to json file and animals array
-    const animal = createNewAnimal(req.body, animals);
+        // add animal to json file and animals array
+        const animal = createNewAnimal(req.body, animals);
 
-    res.json(animal);
+        res.json(animal);
     }
+});
+
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, './public/index.html'));
+});
+
+app.get('/animals', (req, res) => {
+    res.sendFile(path.join(__dirname, './public/animals.html'));
+});
+
+app.get('/zookeepers', (req, res) => {
+    res.sendFile(path.join(__dirname, './public/zookeepers.html'));
+});
+
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, './public/index.html'));
 });
 
 app.listen(PORT, () => {
